@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Best Friends - Gerunds & Infinitives</title>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #c084fc;
+            --primary-light: #e9d5ff;
+            --secondary: #60a5fa;
+            --success: #4ade80;
+            --success-bg: rgba(74, 222, 128, 0.15);
+            --warning: #fbbf24;
+            --warning-bg: rgba(251, 191, 36, 0.15);
+            --error: #f87171;
+            --error-bg: rgba(248, 113, 113, 0.15);
+            --bg-dark: #090a0f;
+            --bg-card: rgba(255, 255, 255, 0.04);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(ellipse at bottom, #1b2735 0%, var(--bg-dark) 100%);
+            min-height: 100vh;
+            color: #f8fafc;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+        .stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+        .star { position: absolute; background: white; border-radius: 50%; animation: twinkle var(--duration) ease-in-out infinite; opacity: 0; }
+        @keyframes twinkle { 0%, 100% { opacity: 0; transform: scale(0.5); } 50% { opacity: var(--max-opacity); transform: scale(1.3); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+        @keyframes pop { 0% { transform: scale(0.8); opacity: 0; } 50% { transform: scale(1.1); } 100% { transform: scale(1); opacity: 1; } }
+
+        .main-wrapper { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 60px 20px; }
+        .header { text-align: center; margin-bottom: 50px; animation: fadeInUp 1s ease-out; }
+        .main-title {
+            font-family: 'Comfortaa', cursive; font-size: 2.5em; font-weight: 700;
+            background: linear-gradient(90deg, #c084fc, #ffffff, #60a5fa);
+            background-size: 300% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+        }
+        .header p { font-size: 1.15em; color: #c4b5fd; max-width: 700px; margin: 0 auto; }
+
+        .welcome-form {
+            background: var(--bg-card); backdrop-filter: blur(20px); border: 1px solid rgba(192, 132, 252, 0.3);
+            border-radius: 24px; padding: 50px 40px; text-align: center; max-width: 500px; margin: 0 auto 50px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+        .welcome-form h2 { font-family: 'Comfortaa', cursive; font-size: 2em; margin-bottom: 15px; color: var(--primary-light); }
+        .name-input {
+            width: 100%; max-width: 320px; padding: 16px 24px; background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(192, 132, 252, 0.4); border-radius: 14px; color: #fff; font-size: 1.1em;
+            text-align: center; margin-bottom: 25px; font-family: 'Inter', sans-serif;
+        }
+        .btn-start, .btn-finish {
+            padding: 16px 45px; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white; border: none; border-radius: 50px; font-family: 'Comfortaa', cursive; font-size: 1.1em;
+            font-weight: 700; cursor: pointer; transition: all 0.3s ease;
+        }
+        .btn-start:hover, .btn-finish:hover { transform: translateY(-3px) scale(1.02); }
+
+        .timer-bar {
+            position: sticky; top: 15px; z-index: 100; background: rgba(192, 132, 252, 0.15);
+            border: 1px solid rgba(192, 132, 252, 0.4); border-radius: 50px; padding: 12px 25px;
+            text-align: center; margin-bottom: 30px; font-family: 'Comfortaa', cursive;
+            color: var(--primary-light); backdrop-filter: blur(12px); display: none;
+        }
+        .timer-bar.show { display: block; }
+
+        .task-section {
+            background: var(--bg-card); backdrop-filter: blur(16px); border: 1px solid rgba(192, 132, 252, 0.2);
+            border-radius: 24px; padding: 40px; margin-bottom: 40px; animation: fadeInUp 0.8s ease-out;
+            display: none;
+        }
+        .task-section.show { display: block; }
+        .section-title { font-family: 'Comfortaa', cursive; font-size: 1.8em; color: var(--primary-light); text-align: center; margin-bottom: 10px; }
+        .instruction { text-align: center; color: #94a3b8; margin-bottom: 35px; font-size: 1.05em; }
+
+        .pre-questions {
+            background: rgba(192, 132, 252, 0.08);
+            border: 2px solid rgba(192, 132, 252, 0.3);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        .pre-question {
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            color: #e2e8f0;
+        }
+        .pre-question strong { color: var(--primary); }
+
+        .dialogue-box {
+            background: rgba(192, 132, 252, 0.08);
+            border: 2px solid rgba(192, 132, 252, 0.3);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            line-height: 2;
+            font-size: 1.05em;
+        }
+        .dialogue-line { margin-bottom: 12px; }
+        .speaker { font-weight: 700; color: var(--primary); margin-right: 10px; }
+        .gap-select {
+            display: inline-block;
+            margin: 0 5px;
+            padding: 5px 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95em;
+            cursor: pointer;
+        }
+        .gap-select.correct { border-color: var(--success); background: var(--success-bg); color: var(--success); }
+        .gap-select.wrong { border-color: var(--error); background: var(--error-bg); color: var(--error); }
+
+        .comprehension-questions {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(192, 132, 252, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .comp-question {
+            font-size: 1.1em;
+            color: #ffffff;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        .comp-textarea {
+            width: 100%;
+            min-height: 60px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1.5px solid rgba(192, 132, 252, 0.4);
+            border-radius: 10px;
+            padding: 12px;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 1em;
+            resize: vertical;
+        }
+
+        .create-dialogue-task {
+            background: rgba(192, 132, 252, 0.08);
+            border: 2px dashed rgba(192, 132, 252, 0.4);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .create-dialogue-task h3 {
+            color: var(--primary-light);
+            margin-bottom: 15px;
+            font-family: 'Comfortaa', cursive;
+        }
+
+        .criteria-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .criteria-table th {
+            background: rgba(192, 132, 252, 0.3);
+            color: var(--primary-light);
+            padding: 15px;
+            text-align: left;
+            font-family: 'Comfortaa', cursive;
+            font-weight: 600;
+        }
+        .criteria-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(192, 132, 252, 0.2);
+            color: #e2e8f0;
+        }
+        .criteria-table tr:last-child td { border-bottom: none; }
+        .score-col { text-align: center; font-weight: 700; color: var(--warning); }
+
+        .result-message {
+            text-align: center;
+            padding: 20px;
+            border-radius: 16px;
+            margin-top: 25px;
+            font-size: 1.15em;
+            font-weight: 600;
+            display: none;
+        }
+        .result-message.success { background: var(--success-bg); border: 1px solid var(--success); color: var(--success); display: block; }
+        .result-message.error { background: var(--error-bg); border: 1px solid var(--error); color: #fca5a5; display: block; }
+        
+        .sending-status { text-align: center; margin-top: 15px; font-size: 0.95em; color: #94a3b8; display: none; }
+        .sending-status.show { display: block; }
+
+        .badge-container {
+            text-align: center;
+            margin: 40px 0;
+            display: none;
+        }
+        .badge-container.show { display: block; animation: pop 0.6s ease-out; }
+        .badge {
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4em;
+            box-shadow: 0 0 40px rgba(251, 191, 36, 0.6);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        .badge-text {
+            font-family: 'Comfortaa', cursive;
+            font-size: 1.5em;
+            color: #fbbf24;
+            margin-top: 15px;
+            font-weight: 700;
+        }
+
+        @media (max-width: 768px) {
+            .main-title { font-size: 2em; }
+            .task-section { padding: 25px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="starsContainer"></div>
+
+    <div class="main-wrapper">
+        <div class="header">
+            <h1 class="main-title">Best Friends - Gerunds & Infinitives</h1>
+            <p>Learn about friendship and character qualities while mastering verb patterns! ✨</p>
+        </div>
+
+        <div class="welcome-form" id="welcomeForm">
+            <h2>Welcome!</h2>
+            <p>Enter your name to start</p>
+            <input type="text" class="name-input" id="studentName" placeholder="Your name">
+            <br>
+            <button class="btn-start" onclick="startExercise()">Start Exercise ✨</button>
+        </div>
+
+        <div class="timer-bar" id="timerBar">
+            <span>⏱️ </span>
+            <span id="timerDisplay">00:00</span>
+        </div>
+
+        <!-- Task 1: Pre-reading Questions -->
+        <div class="task-section" id="task1">
+            <h2 class="section-title">📝 Task 1: Before Reading</h2>
+            <p class="instruction">Answer these questions before reading the dialogue</p>
+            
+            <div class="pre-questions">
+                <div class="pre-question"><strong>1.</strong> What qualities are important in a best friend? (Think about: honest, reliable, funny, kind...)</div>
+                <div class="pre-question"><strong>2.</strong> What do you enjoy doing with your best friend?</div>
+            </div>
+
+            <button class="btn-start" onclick="goToTask2()">Continue to Dialogue →</button>
+        </div>
+
+        <!-- Task 2: Dialogue with Gaps -->
+        <div class="task-section" id="task2">
+            <h2 class="section-title">💬 Task 2: Read the Dialogue</h2>
+            <p class="instruction">Choose the correct form: <b>gerund (-ing)</b>, <b>infinitive (to + verb)</b>, or <b>bare infinitive</b>.</p>
+            
+            <div class="dialogue-box" id="dialogueBox"></div>
+            
+            <button class="btn-start" onclick="checkDialogue()">✓ Check Dialogue</button>
+            <div class="result-message" id="dialogueResult"></div>
+            <button class="btn-start" onclick="goToTask3()" id="btnTask3" style="display:none; margin-top:15px;">Continue →</button>
+        </div>
+
+        <!-- Task 3: Comprehension Questions -->
+        <div class="task-section" id="task3">
+            <h2 class="section-title">📖 Task 3: Comprehension Questions</h2>
+            <p class="instruction">Answer the questions about the dialogue</p>
+            
+            <div class="comprehension-questions">
+                <div class="comp-question">1. Why is Emma worried about the school project?</div>
+                <textarea class="comp-textarea" id="comp1" placeholder="Type your answer..."></textarea>
+            </div>
+
+            <div class="comprehension-questions">
+                <div class="comp-question">2. What character qualities does Jake mention about Emma?</div>
+                <textarea class="comp-textarea" id="comp2" placeholder="Type your answer..."></textarea>
+            </div>
+
+            <div class="comprehension-questions">
+                <div class="comp-question">3. What do they decide to do together?</div>
+                <textarea class="comp-textarea" id="comp3" placeholder="Type your answer..."></textarea>
+            </div>
+
+            <button class="btn-start" onclick="checkComprehension()">✓ Check Answers</button>
+            <div class="result-message" id="compResult"></div>
+            <button class="btn-start" onclick="goToTask4()" id="btnTask4" style="display:none; margin-top:15px;">Continue →</button>
+        </div>
+
+        <!-- Task 4: Create Your Dialogue -->
+        <div class="task-section" id="task4">
+            <h2 class="section-title">✍️ Task 4: Create Your Own Dialogue</h2>
+            <p class="instruction">Write a dialogue (6 statements and 6 responses) about BEST FRIENDS. Use at least 4 CHARACTER QUALITIES words.</p>
+            
+            <div class="create-dialogue-task">
+                <h3> Requirements:</h3>
+                <ul style="margin-left: 20px; margin-bottom: 20px; line-height: 1.8;">
+                    <li>Topic: Best Friends</li>
+                    <li>Length: 6 statements + 6 responses (12 lines total)</li>
+                    <li>Use at least 4 character qualities: <i>honest, reliable, funny, kind, generous, patient, loyal, creative, responsible, supportive</i></li>
+                    <li>Use verbs with gerunds and infinitives correctly</li>
+                </ul>
+                
+                <textarea class="comp-textarea" id="studentDialogue" rows="12" placeholder="Write your dialogue here..."></textarea>
+            </div>
+
+            <button class="btn-start" onclick="checkStudentDialogue()">✓ Save Dialogue</button>
+            <div class="result-message" id="dialogueFeedback"></div>
+            <button class="btn-start" onclick="goToTask5()" id="btnTask5" style="display:none; margin-top:15px;">Continue →</button>
+        </div>
+
+        <!-- Task 5: Assessment Criteria -->
+        <div class="task-section" id="task5">
+            <h2 class="section-title"> Assessment Criteria</h2>
+            <p class="instruction">Review the criteria for your dialogue</p>
+            
+            <table class="criteria-table">
+                <thead>
+                    <tr>
+                        <th>Criteria</th>
+                        <th>Description</th>
+                        <th class="score-col">Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Contents and Span</strong></td>
+                        <td>The dialogue is about BEST FRIENDS and contains 6 statements and 6 responses</td>
+                        <td class="score-col">1</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2"><strong>Grammar</strong></td>
+                        <td>I've made 1-2 mistakes</td>
+                        <td class="score-col">2</td>
+                    </tr>
+                    <tr>
+                        <td>I've made 3-4 mistakes</td>
+                        <td class="score-col">1</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Vocabulary</strong></td>
+                        <td>I've used CHARACTER QUALITIES vocabulary (at least 4 words!)</td>
+                        <td class="score-col">1</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2"><strong>Pronunciation</strong></td>
+                        <td>I've made 1-2 mistakes</td>
+                        <td class="score-col">2</td>
+                    </tr>
+                    <tr>
+                        <td>I've made 3-4 mistakes</td>
+                        <td class="score-col">1</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Criteria</strong></td>
+                        <td>All answers that don't correspond to the above criteria</td>
+                        <td class="score-col">0</td>
+                    </tr>
+                    <tr style="background: rgba(192, 132, 252, 0.2);">
+                        <td colspan="2" style="text-align: center; font-weight: 700; color: var(--primary-light);">Max Score</td>
+                        <td class="score-col" style="font-size: 1.3em;">6</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Badge Section -->
+        <div class="badge-container" id="badgeContainer">
+            <div class="badge">🏆</div>
+            <div class="badge-text">Completed!</div>
+        </div>
+
+        <!-- Final Task -->
+        <div class="task-section" id="finalTask" style="text-align: center;">
+            <h2 class="section-title">🚀 Ready to Finish?</h2>
+            <p class="instruction">Click the button below to send results to your teacher.</p>
+            <button class="btn-finish" onclick="finishAndSend()">🚀 Finish & Send Results</button>
+            <div class="sending-status" id="sendingStatus"></div>
+            <div class="result-message" id="finalResultMessage"></div>
+        </div>
+
+    </div>
+
+    <script>
+        const POWER_AUTOMATE_URL = 'https://default50bef10a64ce4efab7ceef7facd9c8.97.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/04/workflows/80320cf3242145f38cf2a9fe697b1bcf/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=pmVjt3_a2XgjEk7CxztVzXYwdUnHTs1Po59jq45gcyw';
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwCybdydUS2PDlskYqe2_jdbTns0MB_6e45CLWCkpr6jLB-d1zHm5ebBifFNLFoKhwr/exec';
+        
+        let studentName = '';
+        let startTime = null;
+        let timerInterval = null;
+        let isExerciseActive = false;
+        let totalScore = 0;
+        let maxPossibleScore = 0;
+
+        const studentAnswers = {
+            dialogue: [],
+            comprehension: [],
+            studentDialogue: ''
+        };
+
+        // Simple dialogue with gaps
+        const dialogueLines = [
+            { speaker: "Emma", text: "Hey Jake, I need ", gap: { options: ["to talk", "talking"], correct: "to talk" }, after: " to you about our school project." },
+            { speaker: "Jake", text: "Sure! What's wrong? You seem worried." },
+            { speaker: "Emma", text: "I'm not sure if I can finish it on time. I keep ", gap: { options: ["worrying", "to worry"], correct: "worrying" }, after: " about it." },
+            { speaker: "Jake", text: "Don't worry! I enjoy ", gap: { options: ["working", "to work"], correct: "working" }, after: " with you. You're so creative and organized!" },
+            { speaker: "Emma", text: "Really? Thanks! I appreciate ", gap: { options: ["having", "to have"], correct: "having" }, after: " such a reliable friend like you." },
+            { speaker: "Jake", text: "That's what best friends are for! We should ", gap: { options: ["start", "to start", "starting"], correct: "start" }, after: " working on it together tomorrow." },
+            { speaker: "Emma", text: "Good idea! I want ", gap: { options: ["to make", "making"], correct: "to make" }, after: " sure it's perfect. Do you mind ", gap2: { options: ["helping", "to help"], correct: "helping" }, after2: " me with the research part?" },
+            { speaker: "Jake", text: "Of course not! I don't mind ", gap: { options: ["helping", "to help"], correct: "helping" }, after: ". You always support me when I need it." },
+            { speaker: "Emma", text: "That's true! We make a great team. Let's ", gap: { options: ["meet", "to meet", "meeting"], correct: "meet" }, after: " at the library after school." },
+            { speaker: "Jake", text: "Perfect! I promise ", gap: { options: ["to bring", "bringing"], correct: "to bring" }, after: " all my notes. We're going ", gap2: { options: ["to ace", "acing"], correct: "to ace" }, after2: " this project!" },
+            { speaker: "Emma", text: "Thanks, Jake! You're the best friend ever!" }
+        ];
+
+        function createStars() {
+            const container = document.getElementById('starsContainer');
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                const size = Math.random() * 3 + 1;
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                star.style.setProperty('--duration', (Math.random() * 4 + 2) + 's');
+                star.style.setProperty('--max-opacity', Math.random() * 0.8 + 0.2);
+                container.appendChild(star);
+            }
+        }
+
+        function startExercise() {
+            const nameInput = document.getElementById('studentName');
+            studentName = nameInput.value.trim();
+            if (studentName === '') {
+                nameInput.style.borderColor = 'var(--error)';
+                nameInput.style.animation = 'shake 0.4s ease';
+                setTimeout(() => { nameInput.style.borderColor = ''; nameInput.style.animation = ''; }, 400);
+                alert('Please enter your name!');
+                return;
+            }
+            
+            document.getElementById('welcomeForm').style.display = 'none';
+            document.getElementById('timerBar').classList.add('show');
+            document.getElementById('task1').classList.add('show');
+            
+            startTime = Date.now();
+            isExerciseActive = true;
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        function updateTimer() {
+            if (!isExerciseActive) return;
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            document.getElementById('timerDisplay').textContent = 
+                String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+        }
+
+        function goToTask2() {
+            document.getElementById('task2').classList.add('show');
+            initDialogue();
+            document.getElementById('task2').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function initDialogue() {
+            const container = document.getElementById('dialogueBox');
+            container.innerHTML = '';
+            maxPossibleScore = 11; // 11 gaps total
+
+            dialogueLines.forEach((line, index) => {
+                const div = document.createElement('div');
+                div.className = 'dialogue-line';
+                
+                let html = `<span class="speaker">${line.speaker}:</span> ${line.text}`;
+                
+                if (line.gap) {
+                    html += `<select class="gap-select" id="gap-${index}-1" data-correct="${line.gap.correct}">`;
+                    html += `<option value="">Choose...</option>`;
+                    line.gap.options.forEach(opt => {
+                        html += `<option value="${opt}">${opt}</option>`;
+                    });
+                    html += `</select>${line.after || ''}`;
+                }
+                
+                if (line.gap2) {
+                    html += `<select class="gap-select" id="gap-${index}-2" data-correct="${line.gap2.correct}">`;
+                    html += `<option value="">Choose...</option>`;
+                    line.gap2.options.forEach(opt => {
+                        html += `<option value="${opt}">${opt}</option>`;
+                    });
+                    html += `</select>${line.after2 || ''}`;
+                }
+                
+                div.innerHTML = html;
+                container.appendChild(div);
+            });
+        }
+
+        function checkDialogue() {
+            const selects = document.querySelectorAll('.gap-select');
+            let correct = 0;
+            let allAnswered = true;
+
+            selects.forEach(select => {
+                if (!select.value) {
+                    allAnswered = false;
+                    return;
+                }
+
+                const isCorrect = select.value === select.dataset.correct;
+                if (isCorrect) {
+                    select.classList.add('correct');
+                    correct++;
+                } else {
+                    select.classList.add('wrong');
+                }
+                
+                studentAnswers.dialogue.push({
+                    gap: select.id,
+                    studentAnswer: select.value,
+                    correctAnswer: select.dataset.correct,
+                    isCorrect: isCorrect
+                });
+            });
+
+            if (!allAnswered) {
+                alert('Please answer all gaps!');
+                return;
+            }
+
+            totalScore += correct;
+            const resultDiv = document.getElementById('dialogueResult');
+            resultDiv.className = 'result-message success';
+            resultDiv.innerHTML = `✨ Great! ${correct} out of ${selects.length} correct!`;
+            document.getElementById('btnTask3').style.display = 'inline-block';
+        }
+
+        function goToTask3() {
+            document.getElementById('task3').classList.add('show');
+            document.getElementById('task3').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function checkComprehension() {
+            const answers = [];
+            let allAnswered = true;
+
+            for (let i = 1; i <= 3; i++) {
+                const textarea = document.getElementById(`comp${i}`);
+                if (!textarea.value.trim()) {
+                    allAnswered = false;
+                    break;
+                }
+                answers.push(textarea.value.trim());
+            }
+
+            if (!allAnswered) {
+                alert('Please answer all questions!');
+                return;
+            }
+
+            studentAnswers.comprehension = answers;
+            const resultDiv = document.getElementById('compResult');
+            resultDiv.className = 'result-message success';
+            resultDiv.innerHTML = '✨ Answers saved!';
+            document.getElementById('btnTask4').style.display = 'inline-block';
+        }
+
+        function goToTask4() {
+            document.getElementById('task4').classList.add('show');
+            document.getElementById('task4').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function checkStudentDialogue() {
+            const dialogue = document.getElementById('studentDialogue').value.trim();
+            
+            if (!dialogue) {
+                alert('Please write your dialogue!');
+                return;
+            }
+
+            const lines = dialogue.split('\n').filter(line => line.trim().length > 0);
+            const characterQualities = ['honest', 'reliable', 'funny', 'kind', 'generous', 'patient', 'loyal', 'creative', 'responsible', 'supportive'];
+            const usedQualities = characterQualities.filter(q => dialogue.toLowerCase().includes(q));
+            
+            studentAnswers.studentDialogue = dialogue;
+            
+            const feedback = document.getElementById('dialogueFeedback');
+            let message = `✨ Dialogue saved! Lines: ${lines.length}. Character qualities: ${usedQualities.length} (${usedQualities.join(', ') || 'none'}).`;
+            
+            if (lines.length >= 12 && usedQualities.length >= 4) {
+                message += ' Perfect! You meet all requirements!';
+                feedback.className = 'result-message success';
+            } else {
+                message += ' Try to add more lines and qualities!';
+                feedback.className = 'result-message error';
+            }
+            
+            feedback.innerHTML = message;
+            feedback.style.display = 'block';
+            document.getElementById('btnTask5').style.display = 'inline-block';
+        }
+
+        function goToTask5() {
+            document.getElementById('task5').classList.add('show');
+            document.getElementById('finalTask').classList.add('show');
+            document.getElementById('finalTask').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        async function finishAndSend() {
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            const timeSpent = `${Math.floor(elapsed / 60)} min ${elapsed % 60} sec`;
+            const percentage = Math.round((totalScore / maxPossibleScore) * 100) || 0;
+            
+            const statusDiv = document.getElementById('sendingStatus');
+            statusDiv.classList.add('show');
+            statusDiv.innerHTML = '📤 Sending results...';
+            
+            const payload = {
+                student_name: studentName,
+                score: `${totalScore}/${maxPossibleScore}`,
+                percentage: `${percentage}%`,
+                time: new Date().toLocaleString(),
+                exercise_name: "Best Friends - Gerunds & Infinitives",
+                time_spent: timeSpent
+            };
+
+            try {
+                await fetch(POWER_AUTOMATE_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                statusDiv.innerHTML += '<br>✓ Sent to Teams!';
+            } catch (error) {
+                statusDiv.innerHTML += '<br>✗ Error sending';
+            }
+
+            document.getElementById('badgeContainer').classList.add('show');
+            
+            const finalMsg = document.getElementById('finalResultMessage');
+            finalMsg.className = 'result-message success';
+            finalMsg.innerHTML = `<b>🎉 Completed!</b><br>Score: <b>${totalScore}/${maxPossibleScore}</b> (${percentage}%)<br>Time: ${timeSpent}<br>Great job, ${studentName}! ✨`;
+            
+            isExerciseActive = false;
+            clearInterval(timerInterval);
+        }
+
+        window.addEventListener('DOMContentLoaded', createStars);
+    </script>
+</body>
+</html>
